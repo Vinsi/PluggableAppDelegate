@@ -54,4 +54,37 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
 
         return returns
     }
+    
+    //service,service.completion) ->service.completion
+    //[service,service.completion) ->service.completion]
+    //*[service.completion]
+    @discardableResult
+    internal func apply2<ReturnType>(_ work:
+        (ApplicationService, @escaping () -> Swift.Void) -> ReturnType?,
+        completionHandler: @escaping () -> Swift.Void) -> [ReturnType] {
+        let dispatchGroup = DispatchGroup()
+       // var results: [T] = []
+        var returns: [ReturnType] = []
+        
+        for service in _services {
+            dispatchGroup.enter()
+            let returned = work(service, { 
+                //results.append(result)
+                dispatchGroup.leave()
+            })
+            if let returned = returned {
+                returns.append(returned)
+            } else { // delegate doesn't impliment method
+                dispatchGroup.leave()
+            }
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            completionHandler()
+        }
+        
+        return returns
+    }
+    
+    
 }

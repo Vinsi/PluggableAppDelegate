@@ -28,9 +28,9 @@ extension PluggableApplicationDelegate {
     // callbacks without any action by the application. You should call the completionHandler as soon as you're finished handling the callbacks.
     @available(iOS 7.0, *)
     open func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Swift.Void) {
-        apply({ (service, completionHandler) -> Void? in
+        apply2({ (service, completionHandler) -> Void? in
             service.application?(application, handleEventsForBackgroundURLSession: identifier, completionHandler: completionHandler)
-        }, completionHandler: { _ in
+        }, completionHandler: {
             completionHandler()
         })
     }
